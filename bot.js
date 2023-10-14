@@ -1,4 +1,4 @@
-const fs = require('fs'); // Include the fs module to work with the file system
+onst fs = require('fs'); // Include the fs module to work with the file system
 
 // Define a variable to keep track of the last message timestamp
 let lastMessageTimestamp = Date.now();
@@ -25,7 +25,8 @@ const TelegramBot = require('node-telegram-bot-api');
 const token = '6674775946:AAHqSjfv6jX1rVs497CwpsEEVQ2Sw8RhoEg'; // Replace with your bot token
 const bot = new TelegramBot(token, { polling: true });
 
-bot.onText(/\/start@GamdomPlayBot$/, (msg) => {
+bot.on('message', (msg) => {
+  const chatId = msg.chat.id;
   const userId = msg.from.id;
 
   // Update the last message timestamp
@@ -45,10 +46,25 @@ bot.onText(/\/start@GamdomPlayBot$/, (msg) => {
     ]
   };
 
-  // Send a DM to the user with the "web_app" property
-  bot.sendMessage(userId, 'Click here to launch the app 👇', {
-    reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard })
-  });
+  // Check if the message is in a group or supergroup
+  if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
+    // Check if the message text is either "/start" or "/start@YOUR_BOT_NAME"
+    if (msg.text && (msg.text === '/start' || msg.text === `/start@${bot.options.username}`)) {
+      // Send a reply in the group
+      bot.sendMessage(chatId, "I'm sending you instructions via DM 👑");
+      // Send a DM to the user with the "web_app" property
+      bot.sendMessage(userId, 'Click here to launch the app 👇', {
+        reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard })
+      });
+    }
+  } else if (msg.chat.type === 'private') {
+    // Save the user ID of the user who used the bot
+    saveUserIdsToFile([userId]);
+    // Send the message with the "web_app" property for DMs
+    bot.sendMessage(userId, 'Click here to launch the app 👇', {
+      reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard })
+    });
+  }
 });
 
 // Check if the node is running every 2 minutes
