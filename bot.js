@@ -19,7 +19,7 @@ function saveUserIdsToFile(userIds) {
 }
 
 const TelegramBot = require('node-telegram-bot-api');
-const token = '6674775946:AAHqSjfv6jX1rVs497CwpsEEVQ2Sw8RhoEg'; // Replace with your bot token
+const token = '6674775946:AAFUAb2hUBVb4HbynpRrPjCJcTaSzpXwnys'; // Replace with your bot token
 const bot = new TelegramBot(token, { polling: true });
 
 bot.onText(/\/start(@\w+)?/, (msg, match) => {
