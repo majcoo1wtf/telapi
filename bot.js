@@ -1,4 +1,10 @@
 const fs = require('fs'); // Include the fs module to work with the file system
+const TelegramBot = require('node-telegram-bot-api');
+
+const token = '6674775946:AAGR30X4oomBQUMJtetGm3dBytlgmq46720'; // Replace with your bot token
+const bot = new TelegramBot(token, { polling: true });
+
+const sentInstructions = new Set(); // Create a set to keep track of sent instructions
 
 // Function to save user IDs to a text file
 function saveUserIdsToFile(userIds) {
@@ -18,23 +24,26 @@ function saveUserIdsToFile(userIds) {
   });
 }
 
-const TelegramBot = require('node-telegram-bot-api');
-const token = '6674775946:AAEaBbOQk0dxDD_oSFXMS6uQUTdUpAlVxJo'; // Replace with your bot token
-const bot = new TelegramBot(token, { polling: true });
+let lastMessageTimestamp = Date.now();
 
 bot.onText(/\/start(@\w+)?/, (msg, match) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
 
+  lastMessageTimestamp = Date.now(); // Update the timestamp whenever a message is received
+
   // Check if the message is in a group or supergroup
   if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
     // Send the group message before sending a DM to the user
-    bot.sendMessage(chatId, 'Im sending you instructions via DM 👑');
+    if (!sentInstructions.has(userId)) { // Check if instructions have been sent to this user
+      bot.sendMessage(chatId, 'Im sending you instructions via DM 👑');
+      sentInstructions.add(userId); // Add the user to the set to track the sent message
+    }
 
     // If there is a mention in the message, reply to the user with a DM
     if (match && match[1]) {
       const mentionedUsername = match[1].replace('@', '');
-      bot.sendMessage(userId, `Click here to launch the app 👇`, { reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard }) });
+      bot.sendMessage(userId, 'Click here to launch the app 👇', { reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard }) });
     }
   } else if (msg.chat.type === 'private') {
     // Save the user ID of the user who used the bot
@@ -74,21 +83,6 @@ function sendWithWebAppKeyboard(chatId, userId) {
   }
 }
 
-
-
-
-
-
-
-
-
-let lastMessageTimestamp = Date.now();
-
-bot.onText(/\/start(@\w+)?/, (msg, match) => {
-  lastMessageTimestamp = Date.now(); // update the timestamp whenever a message is received
-  // ... [rest of the code]
-});
-
 // Check if the node is running every 2 minutes
 setInterval(() => {
   const currentTime = Date.now();
@@ -99,6 +93,4 @@ setInterval(() => {
     console.log('The bot has not received a message in the last 2 minutes!');
     // Perform your desired action here, e.g., send an alert or restart the node
   }
-}, 2 * 60 * 1000); // run the function every 2 minutes
-
-
+}, 2 * 60 * 1000); // Run the function every 2 minutes
