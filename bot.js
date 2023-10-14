@@ -32,15 +32,29 @@ bot.onText(/\/start(@\w+)?/, (msg, match) => {
   // Update the last message timestamp
   lastMessageTimestamp = Date.now();
 
+  // Define the keyboard with the "web_app" property
+  const keyboard = {
+    inline_keyboard: [
+      [
+        {
+          text: 'Click here to launch the app 👇',
+          web_app: {
+            url: 'https://gamdom.one'
+          }
+        }
+      ]
+    ]
+  };
+
   // Check if the message is in a group or supergroup
   if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
     // Send the group message before sending a DM to the user
-    bot.sendMessage(chatId, 'Im sending you instructions via DM 👑');
+    bot.sendMessage(chatId, "I'm sending you instructions via DM 👑");
 
     // If there is a mention in the message, reply to the user with a DM
     if (match && match[1]) {
       const mentionedUsername = match[1].replace('@', '');
-      bot.sendMessage(userId, `Click here to launch the app 👇`, {
+      bot.sendMessage(userId, 'Click here to launch the app 👇', {
         reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard })
       });
     }
@@ -49,38 +63,11 @@ bot.onText(/\/start(@\w+)?/, (msg, match) => {
     saveUserIdsToFile([userId]);
 
     // Send the message with the "web_app" property for DMs
-    sendWithWebAppKeyboard(userId, userId);
+    bot.sendMessage(userId, 'Click here to launch the app 👇', {
+      reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard })
+    });
   }
 });
-
-function sendWithWebAppKeyboard(chatId, userId) {
-  const keyboard = {
-    inline_keyboard: [
-      [
-        {
-          text: 'Play Now!',
-          web_app: { url: 'https://gamdom.one' }
-        }
-      ]
-    ]
-  };
-
-  // Sending message to the group chat with "web_app" property
-  bot.sendMessage(
-    chatId,
-    'Click here to launch the app 👇',
-    { reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard }) }
-  );
-
-  // Sending DM to the user with "web_app" property
-  if (chatId !== userId) {
-    bot.sendMessage(
-      userId,
-      'Click here to launch the app 👇',
-      { reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard }) }
-    );
-  }
-}
 
 // Check if the node is running every 2 minutes
 setInterval(() => {
