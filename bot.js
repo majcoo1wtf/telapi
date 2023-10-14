@@ -1,4 +1,4 @@
-onst fs = require('fs'); // Include the fs module to work with the file system
+const fs = require('fs'); // Include the fs module to work with the file system
 
 // Define a variable to keep track of the last message timestamp
 let lastMessageTimestamp = Date.now();
