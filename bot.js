@@ -73,3 +73,30 @@ function sendWithWebAppKeyboard(chatId, userId) {
     );
   }
 }
+
+
+
+
+
+const http = require('http');
+
+// Replace with the URL of your server
+const serverUrl = 'https://teleapi-do0c.onrender.com';
+
+const options = {
+  method: 'HEAD', // Use the HEAD method to check if the server is running without fetching the entire content.
+};
+
+const req = http.request(serverUrl, options, (res) => {
+  if (res.statusCode === 200) {
+    console.log('Server is running.');
+  } else {
+    console.log('Server is not running. Status code: ' + res.statusCode);
+  }
+});
+
+req.on('error', (err) => {
+  console.error('Error checking server status:', err);
+});
+
+req.end();
