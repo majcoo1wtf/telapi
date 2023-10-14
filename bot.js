@@ -35,7 +35,7 @@ bot.onText(/\/start(@\w+)?/, (msg, match) => {
   // Check if the message is in a group or supergroup
   if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
     // Send the group message before sending a DM to the user
-    bot.sendMessage(chatId, 'I'm sending you instructions via DM 👑');
+    bot.sendMessage(chatId, 'Im sending you instructions via DM 👑');
 
     // If there is a mention in the message, reply to the user with a DM
     if (match && match[1]) {
