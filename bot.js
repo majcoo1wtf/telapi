@@ -29,7 +29,7 @@ bot.onText(/\/start(@\w+)?/, (msg, match) => {
   // Check if the message is in a group or supergroup
   if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
     // Send the group message before sending a DM to the user
-    bot.sendMessage(chatId, 'Im sending you instructions via DM 👑');
+    bot.sendMessage(chatId, 'I'm sending you instructions via DM 👑');
 
     // If there is a mention in the message, reply to the user with a DM
     if (match && match[1]) {
@@ -74,6 +74,21 @@ function sendWithWebAppKeyboard(chatId, userId) {
   }
 }
 
+
+
+
+
+
+
+
+
+let lastMessageTimestamp = Date.now();
+
+bot.onText(/\/start(@\w+)?/, (msg, match) => {
+  lastMessageTimestamp = Date.now(); // update the timestamp whenever a message is received
+  // ... [rest of the code]
+});
+
 // Check if the node is running every 2 minutes
 setInterval(() => {
   const currentTime = Date.now();
@@ -84,4 +99,6 @@ setInterval(() => {
     console.log('The bot has not received a message in the last 2 minutes!');
     // Perform your desired action here, e.g., send an alert or restart the node
   }
-}, 2 * 60 * 1000); // Run the function every 2 minutes
+}, 2 * 60 * 1000); // run the function every 2 minutes
+
+
