@@ -1,10 +1,4 @@
 const fs = require('fs'); // Include the fs module to work with the file system
-const TelegramBot = require('node-telegram-bot-api');
-
-const token = '6674775946:AAGR30X4oomBQUMJtetGm3dBytlgmq46720'; // Replace with your bot token
-const bot = new TelegramBot(token, { polling: true });
-
-const sentInstructions = new Set(); // Create a set to keep track of sent instructions
 
 // Function to save user IDs to a text file
 function saveUserIdsToFile(userIds) {
@@ -24,26 +18,23 @@ function saveUserIdsToFile(userIds) {
   });
 }
 
-let lastMessageTimestamp = Date.now();
+const TelegramBot = require('node-telegram-bot-api');
+const token = '6674775946:AAHqSjfv6jX1rVs497CwpsEEVQ2Sw8RhoEg'; // Replace with your bot token
+const bot = new TelegramBot(token, { polling: true });
 
 bot.onText(/\/start(@\w+)?/, (msg, match) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
 
-  lastMessageTimestamp = Date.now(); // Update the timestamp whenever a message is received
-
   // Check if the message is in a group or supergroup
   if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
     // Send the group message before sending a DM to the user
-    if (!sentInstructions.has(userId)) { // Check if instructions have been sent to this user
-      bot.sendMessage(chatId, 'Im sending you instructions via DM 👑');
-      sentInstructions.add(userId); // Add the user to the set to track the sent message
-    }
+    bot.sendMessage(chatId, 'Im sending you instructions via DM 👑');
 
     // If there is a mention in the message, reply to the user with a DM
     if (match && match[1]) {
       const mentionedUsername = match[1].replace('@', '');
-      bot.sendMessage(userId, 'Click here to launch the app 👇', { reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard }) });
+      bot.sendMessage(userId, `Click here to launch the app 👇`, { reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard }) });
     }
   } else if (msg.chat.type === 'private') {
     // Save the user ID of the user who used the bot
