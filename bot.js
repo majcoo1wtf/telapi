@@ -1,8 +1,5 @@
 const fs = require('fs'); // Include the fs module to work with the file system
 
-// Define a variable to keep track of the last message timestamp
-let lastMessageTimestamp = Date.now();
-
 // Function to save user IDs to a text file
 function saveUserIdsToFile(userIds) {
   // Define the file path where you want to save the user IDs
@@ -25,47 +22,57 @@ const TelegramBot = require('node-telegram-bot-api');
 const token = '6674775946:AAHqSjfv6jX1rVs497CwpsEEVQ2Sw8RhoEg'; // Replace with your bot token
 const bot = new TelegramBot(token, { polling: true });
 
-bot.on('message', (msg) => {
+bot.onText(/\/start(@\w+)?/, (msg, match) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
 
-  // Update the last message timestamp
-  lastMessageTimestamp = Date.now();
+  // Check if the message is in a group or supergroup
+  if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
+    // Send the group message before sending a DM to the user
+    bot.sendMessage(chatId, 'Im sending you instructions via DM 👑');
 
-  // Define the keyboard with the "web_app" property
+    // If there is a mention in the message, reply to the user with a DM
+    if (match && match[1]) {
+      const mentionedUsername = match[1].replace('@', '');
+      bot.sendMessage(userId, `Click here to launch the app 👇`, { reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard }) });
+    }
+  } else if (msg.chat.type === 'private') {
+    // Save the user ID of the user who used the bot
+    saveUserIdsToFile([userId]);
+
+    // Send the message with the "web_app" property for DMs
+    sendWithWebAppKeyboard(userId, userId);
+  }
+});
+
+function sendWithWebAppKeyboard(chatId, userId) {
   const keyboard = {
     inline_keyboard: [
       [
         {
-          text: 'Click here to launch the app 👇',
-          web_app: {
-            url: 'https://gamdom.one'
-          }
+          text: 'Play Now!',
+          web_app: { url: 'https://gamdom.one' }
         }
       ]
     ]
   };
 
-  // Check if the message is in a group or supergroup
-  if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
-    // Check if the message text is either "/start" or "/start@YOUR_BOT_NAME"
-    if (msg.text && (msg.text === '/start' || msg.text === `/start@${bot.options.username}`)) {
-      // Send a reply in the group
-      bot.sendMessage(chatId, "I'm sending you instructions via DM 👑");
-      // Send a DM to the user with the "web_app" property
-      bot.sendMessage(userId, 'Click here to launch the app 👇', {
-        reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard })
-      });
-    }
-  } else if (msg.chat.type === 'private') {
-    // Save the user ID of the user who used the bot
-    saveUserIdsToFile([userId]);
-    // Send the message with the "web_app" property for DMs
-    bot.sendMessage(userId, 'Click here to launch the app 👇', {
-      reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard })
-    });
+  // Sending message to the group chat with "web_app" property
+  bot.sendMessage(
+    chatId,
+    'Click here to launch the app 👇',
+    { reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard }) }
+  );
+
+  // Sending DM to the user with "web_app" property
+  if (chatId !== userId) {
+    bot.sendMessage(
+      userId,
+      'Click here to launch the app 👇',
+      { reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard }) }
+    );
   }
-});
+}
 
 // Check if the node is running every 2 minutes
 setInterval(() => {
