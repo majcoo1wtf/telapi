@@ -1,5 +1,8 @@
 const fs = require('fs'); // Include the fs module to work with the file system
 
+// Define a variable to keep track of the last message timestamp
+let lastMessageTimestamp = Date.now();
+
 // Function to save user IDs to a text file
 function saveUserIdsToFile(userIds) {
   // Define the file path where you want to save the user IDs
@@ -26,15 +29,20 @@ bot.onText(/\/start(@\w+)?/, (msg, match) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
 
+  // Update the last message timestamp
+  lastMessageTimestamp = Date.now();
+
   // Check if the message is in a group or supergroup
   if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
     // Send the group message before sending a DM to the user
-    bot.sendMessage(chatId, 'Im sending you instructions via DM 👑');
+    bot.sendMessage(chatId, 'I'm sending you instructions via DM 👑');
 
     // If there is a mention in the message, reply to the user with a DM
     if (match && match[1]) {
       const mentionedUsername = match[1].replace('@', '');
-      bot.sendMessage(userId, `Click here to launch the app 👇`, { reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard }) });
+      bot.sendMessage(userId, `Click here to launch the app 👇`, {
+        reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard })
+      });
     }
   } else if (msg.chat.type === 'private') {
     // Save the user ID of the user who used the bot
