@@ -54,10 +54,10 @@ bot.onText(/\/start@YOUR_BOT_NAME$/, (msg) => {
 // Check if the node is running every 2 minutes
 setInterval(() => {
   const currentTime = Date.now();
-  const two minutesInMilliseconds = 2 * 60 * 1000;
+  const twoMinutesInMilliseconds = 2 * 60 * 1000;
 
   // If it's been more than 2 minutes since the last message
-  if (currentTime - lastMessageTimestamp > two minutesInMilliseconds) {
+  if (currentTime - lastMessageTimestamp > twoMinutesInMilliseconds) {
     console.log('The bot has not received a message in the last 2 minutes!');
     // Perform your desired action here, e.g., send an alert or restart the node
   }
