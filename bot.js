@@ -25,7 +25,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const token = '6674775946:AAHqSjfv6jX1rVs497CwpsEEVQ2Sw8RhoEg'; // Replace with your bot token
 const bot = new TelegramBot(token, { polling: true });
 
-bot.onText(/\/start@YOUR_BOT_NAME$/, (msg) => {
+bot.onText(/\/start@GamdomPlayBot$/, (msg) => {
   const userId = msg.from.id;
 
   // Update the last message timestamp
