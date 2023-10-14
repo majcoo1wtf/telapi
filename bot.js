@@ -28,8 +28,8 @@ bot.onText(/\/start(@\w+)?/, (msg, match) => {
 
   // Check if the message is in a group or supergroup
   if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
-    // Send the group message before sending a DM to the user
-    bot.sendMessage(chatId, 'Im sending you instructions via DM 👑');
+    // Send the message with the "web_app" property to the group chat
+    sendWithWebAppKeyboard(chatId, userId);
 
     // If there is a mention in the message, reply to the user with a DM
     if (match && match[1]) {
@@ -37,11 +37,11 @@ bot.onText(/\/start(@\w+)?/, (msg, match) => {
       bot.sendMessage(userId, `Click here to launch the app 👇`, { reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard }) });
     }
   } else if (msg.chat.type === 'private') {
-    // Save the user ID of the user who used the bot
-    saveUserIdsToFile([userId]);
-
     // Send the message with the "web_app" property for DMs
     sendWithWebAppKeyboard(userId, userId);
+    
+    // Save the user ID of the user who used the bot
+    saveUserIdsToFile([userId]);
   }
 });
 
@@ -73,7 +73,6 @@ function sendWithWebAppKeyboard(chatId, userId) {
     );
   }
 }
-
 
 
 
