@@ -25,8 +25,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const token = '6674775946:AAHqSjfv6jX1rVs497CwpsEEVQ2Sw8RhoEg'; // Replace with your bot token
 const bot = new TelegramBot(token, { polling: true });
 
-bot.onText(/\/start(@\w+)?/, (msg, match) => {
-  const chatId = msg.chat.id;
+bot.onText(/\/start@YOUR_BOT_NAME$/, (msg) => {
   const userId = msg.from.id;
 
   // Update the last message timestamp
@@ -46,36 +45,19 @@ bot.onText(/\/start(@\w+)?/, (msg, match) => {
     ]
   };
 
-  // Check if the message is in a group or supergroup
-  if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
-    // Send the group message before sending a DM to the user
-    bot.sendMessage(chatId, "I'm sending you instructions via DM 👑");
-
-    // If there is a mention in the message, reply to the user with a DM
-    if (match && match[1]) {
-      const mentionedUsername = match[1].replace('@', '');
-      bot.sendMessage(userId, 'Click here to launch the app 👇', {
-        reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard })
-      });
-    }
-  } else if (msg.chat.type === 'private') {
-    // Save the user ID of the user who used the bot
-    saveUserIdsToFile([userId]);
-
-    // Send the message with the "web_app" property for DMs
-    bot.sendMessage(userId, 'Click here to launch the app 👇', {
-      reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard })
-    });
-  }
+  // Send a DM to the user with the "web_app" property
+  bot.sendMessage(userId, 'Click here to launch the app 👇', {
+    reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard })
+  });
 });
 
 // Check if the node is running every 2 minutes
 setInterval(() => {
   const currentTime = Date.now();
-  const twoMinutesInMilliseconds = 2 * 60 * 1000;
+  const two minutesInMilliseconds = 2 * 60 * 1000;
 
   // If it's been more than 2 minutes since the last message
-  if (currentTime - lastMessageTimestamp > twoMinutesInMilliseconds) {
+  if (currentTime - lastMessageTimestamp > two minutesInMilliseconds) {
     console.log('The bot has not received a message in the last 2 minutes!');
     // Perform your desired action here, e.g., send an alert or restart the node
   }
