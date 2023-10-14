@@ -19,7 +19,7 @@ function saveUserIdsToFile(userIds) {
 }
 
 const TelegramBot = require('node-telegram-bot-api');
-const token = '6674775946:AAHlRberTRzMxlRxcnbPwVTja02ZDgIJZVs'; // Replace with your bot token
+const token = '6674775946:AAEaBbOQk0dxDD_oSFXMS6uQUTdUpAlVxJo'; // Replace with your bot token
 const bot = new TelegramBot(token, { polling: true });
 
 bot.onText(/\/start(@\w+)?/, (msg, match) => {
@@ -28,8 +28,8 @@ bot.onText(/\/start(@\w+)?/, (msg, match) => {
 
   // Check if the message is in a group or supergroup
   if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
-    // Send the message with the "web_app" property to the group chat
-    sendWithWebAppKeyboard(chatId, userId);
+    // Send the group message before sending a DM to the user
+    bot.sendMessage(chatId, 'I'm sending you instructions via DM 👑');
 
     // If there is a mention in the message, reply to the user with a DM
     if (match && match[1]) {
@@ -37,11 +37,11 @@ bot.onText(/\/start(@\w+)?/, (msg, match) => {
       bot.sendMessage(userId, `Click here to launch the app 👇`, { reply_markup: JSON.stringify({ inline_keyboard: keyboard.inline_keyboard }) });
     }
   } else if (msg.chat.type === 'private') {
-    // Send the message with the "web_app" property for DMs
-    sendWithWebAppKeyboard(userId, userId);
-    
     // Save the user ID of the user who used the bot
     saveUserIdsToFile([userId]);
+
+    // Send the message with the "web_app" property for DMs
+    sendWithWebAppKeyboard(userId, userId);
   }
 });
 
@@ -73,6 +73,14 @@ function sendWithWebAppKeyboard(chatId, userId) {
     );
   }
 }
+
+
+
+
+
+
+
+
 
 let lastMessageTimestamp = Date.now();
 
